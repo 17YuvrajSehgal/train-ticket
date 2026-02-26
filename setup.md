@@ -157,6 +157,7 @@ Ensure:
 From repo root:
 
 ```bash
+cd train-ticket
 bash hack/deploy/deploy.sh train-ticket "--with-monitoring --with-tracing"
 ```
 
