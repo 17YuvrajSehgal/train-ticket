@@ -34,6 +34,11 @@
             <artifactId>lttng-ust-agent-jul</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.lttng.ust.agent</groupId>
+            <artifactId>lttng-ust-agent-common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
