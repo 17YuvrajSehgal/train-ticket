@@ -15,6 +15,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -23,13 +28,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-admin-basic-info-service
-          image: codewisdom/ts-admin-basic-info-service:1.0.0
+          image: local/ts-admin-basic-info-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -46,7 +64,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -83,6 +101,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -91,13 +114,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-admin-order-service
-          image: codewisdom/ts-admin-order-service:1.0.1
+          image: local/ts-admin-order-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -114,7 +150,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -151,6 +187,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -159,13 +200,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-admin-route-service
-          image: codewisdom/ts-admin-route-service:1.0.0
+          image: local/ts-admin-route-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -182,7 +236,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -219,6 +273,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -227,13 +286,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-admin-travel-service
-          image: codewisdom/ts-admin-travel-service:1.0.0
+          image: local/ts-admin-travel-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -250,7 +322,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -287,6 +359,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -295,13 +372,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-admin-user-service
-          image: codewisdom/ts-admin-user-service:1.0.1
+          image: local/ts-admin-user-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -318,7 +408,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -355,6 +445,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -363,13 +458,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-assurance-service
-          image: codewisdom/ts-assurance-service:1.0.0
+          image: local/ts-assurance-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -386,7 +494,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-assurance-mysql
@@ -425,6 +533,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -433,13 +546,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-auth-service
-          image: codewisdom/ts-auth-service:1.0.0
+          image: local/ts-auth-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -456,7 +582,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-auth-mysql
@@ -495,6 +621,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -503,6 +634,15 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-avatar-service
           image:  codewisdom/ts-avatar-service:0.2.0
@@ -510,6 +650,10 @@ spec:
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -526,7 +670,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -563,6 +707,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -571,13 +720,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-basic-service
-          image: codewisdom/ts-basic-service:1.0.0
+          image: local/ts-basic-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -594,7 +756,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -631,6 +793,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -639,13 +806,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-cancel-service
-          image: codewisdom/ts-cancel-service:1.0.0
+          image: local/ts-cancel-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -662,7 +842,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -699,6 +879,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -707,13 +892,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-config-service
-          image: codewisdom/ts-config-service:1.0.0
+          image: local/ts-config-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -730,7 +928,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-config-mysql
@@ -769,6 +967,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -777,13 +980,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-consign-price-service
-          image: codewisdom/ts-consign-price-service:1.0.0
+          image: local/ts-consign-price-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -800,7 +1016,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-consign-price-mysql
@@ -839,6 +1055,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -847,13 +1068,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-consign-service
-          image: codewisdom/ts-consign-service:1.0.1
+          image: local/ts-consign-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -870,7 +1104,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-consign-mysql
@@ -909,6 +1143,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -917,13 +1156,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-contacts-service
-          image: codewisdom/ts-contacts-service:1.0.0
+          image: local/ts-contacts-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -940,7 +1192,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-contacts-mysql
@@ -979,6 +1231,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -987,13 +1244,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-delivery-service
-          image: codewisdom/ts-delivery-service:1.0.0
+          image: local/ts-delivery-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1010,7 +1280,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-delivery-mysql
@@ -1051,6 +1321,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1059,13 +1334,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-execute-service
-          image: codewisdom/ts-execute-service:1.0.0
+          image: local/ts-execute-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1082,7 +1370,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -1119,6 +1407,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1127,13 +1420,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-food-delivery-service
-          image: codewisdom/ts-food-delivery-service:1.0.0
+          image: local/ts-food-delivery-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1150,7 +1456,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-food-delivery-mysql
@@ -1189,6 +1495,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1197,13 +1508,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-food-service
-          image: codewisdom/ts-food-service:1.0.0
+          image: local/ts-food-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1220,7 +1544,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -1261,6 +1585,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1269,13 +1598,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-gateway-service
-          image: codewisdom/ts-gateway-service:1.0.0
+          image: local/ts-gateway-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1292,7 +1634,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -1329,6 +1671,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1337,13 +1684,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-inside-payment-service
-          image: codewisdom/ts-inside-payment-service:1.0.0
+          image: local/ts-inside-payment-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1360,7 +1720,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-inside-payment-mysql
@@ -1399,6 +1759,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1407,13 +1772,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-news-service
-          image: codewisdom/ts-news-service:1.0.0
+          image: local/ts-news-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1430,7 +1808,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -1467,6 +1845,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1475,13 +1858,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-notification-service
-          image: codewisdom/ts-notification-service:1.0.0
+          image: local/ts-notification-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1498,7 +1894,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-notification-mysql
@@ -1539,6 +1935,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1547,13 +1948,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-order-other-service
-          image: codewisdom/ts-order-other-service:1.0.1
+          image: local/ts-order-other-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1570,7 +1984,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-order-other-mysql
@@ -1611,6 +2025,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1619,13 +2038,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-order-service
-          image: codewisdom/ts-order-service:1.0.1
+          image: local/ts-order-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1642,7 +2074,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-order-mysql
@@ -1683,6 +2115,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1691,13 +2128,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-payment-service
-          image: codewisdom/ts-payment-service:1.0.0
+          image: local/ts-payment-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1714,7 +2164,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-payment-mysql
@@ -1753,6 +2203,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1761,13 +2216,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-preserve-other-service
-          image: codewisdom/ts-preserve-other-service:1.0.0
+          image: local/ts-preserve-other-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1784,7 +2252,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -1823,6 +2291,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1831,13 +2304,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-preserve-service
-          image: codewisdom/ts-preserve-service:1.0.0
+          image: local/ts-preserve-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1854,7 +2340,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -1893,6 +2379,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1901,13 +2392,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-price-service
-          image: codewisdom/ts-price-service:1.0.0
+          image: local/ts-price-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1924,7 +2428,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-price-mysql
@@ -1963,6 +2467,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -1971,13 +2480,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-rebook-service
-          image: codewisdom/ts-rebook-service:1.0.1
+          image: local/ts-rebook-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -1994,7 +2516,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -2033,6 +2555,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2041,13 +2568,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-route-plan-service
-          image: codewisdom/ts-route-plan-service:1.0.0
+          image: local/ts-route-plan-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2064,7 +2604,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -2101,6 +2641,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2109,13 +2654,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-route-service
-          image: codewisdom/ts-route-service:1.0.0
+          image: local/ts-route-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2132,7 +2690,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-route-mysql
@@ -2171,6 +2729,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2179,13 +2742,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-seat-service
-          image: codewisdom/ts-seat-service:1.0.0
+          image: local/ts-seat-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2202,7 +2778,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -2239,6 +2815,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2247,13 +2828,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-security-service
-          image: codewisdom/ts-security-service:1.0.0
+          image: local/ts-security-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2270,7 +2864,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-security-mysql
@@ -2309,6 +2903,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2317,13 +2916,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-station-food-service
-          image: codewisdom/ts-station-food-service:1.0.0
+          image: local/ts-station-food-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2340,7 +2952,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-station-food-mysql
@@ -2379,6 +2991,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2387,13 +3004,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-station-service
-          image: codewisdom/ts-station-service:1.0.1
+          image: local/ts-station-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2410,7 +3040,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-station-mysql
@@ -2449,6 +3079,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2457,13 +3092,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-ticket-office-service
-          image: codewisdom/ts-ticket-office-service:1.0.0
+          image: local/ts-ticket-office-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2480,7 +3128,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-ticket-office-mysql
@@ -2519,6 +3167,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2527,13 +3180,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-train-food-service
-          image: codewisdom/ts-train-food-service:1.0.0
+          image: local/ts-train-food-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2550,7 +3216,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-train-food-mysql
@@ -2589,6 +3255,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2597,13 +3268,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-train-service
-          image: codewisdom/ts-train-service:1.0.0
+          image: local/ts-train-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2620,7 +3304,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-train-mysql
@@ -2659,6 +3343,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2667,13 +3356,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-travel-plan-service
-          image: codewisdom/ts-travel-plan-service:1.0.0
+          image: local/ts-travel-plan-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2690,7 +3392,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -2727,6 +3429,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2735,13 +3442,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-travel-service
-          image: codewisdom/ts-travel-service:1.0.0
+          image: local/ts-travel-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2758,7 +3478,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-travel-mysql
@@ -2797,6 +3517,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2805,13 +3530,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-travel2-service
-          image: codewisdom/ts-travel2-service:1.0.0
+          image: local/ts-travel2-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2828,7 +3566,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-travel2-mysql
@@ -2867,6 +3605,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2875,13 +3618,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-user-service
-          image: codewisdom/ts-user-service:1.0.1
+          image: local/ts-user-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2898,7 +3654,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-user-mysql
@@ -2937,6 +3693,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -2945,13 +3706,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-verification-code-service
-          image: codewisdom/ts-verification-code-service:1.0.0
+          image: local/ts-verification-code-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -2968,7 +3742,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - configMapRef:
                 name: nacos
@@ -3004,7 +3778,7 @@ spec:
     spec:
       containers:
         - name: ts-voucher-service
-          image: codewisdom/ts-voucher-service:1.0.0
+          image: local/ts-voucher-service:lttng
           imagePullPolicy: IfNotPresent
           env:
             - name: NODE_IP
@@ -3049,6 +3823,11 @@ spec:
       volumes:
         - name: skywalking-agent
           emptyDir: {}
+        - name: lttng-run
+          hostPath:
+            path: /var/run/lttng
+        - name: lttng-libs
+          emptyDir: {}
       initContainers:
         - name: agent-container
           image: apache/skywalking-java-agent:8.8.0-alpine
@@ -3057,13 +3836,26 @@ spec:
               mountPath: /agent
           command: [ "/bin/sh" ]
           args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+        - name: lttng-init
+          image: debian:bookworm-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y --no-install-recommends lttng-tools liblttng-ust-dev liblttng-ust-java liblttng-ust-agent-java && cp /usr/share/java/lttng-ust-agent-common.jar /lttng-libs/ && cp /usr/share/java/lttng-ust-agent-jul.jar /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-jul-jni.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/jni/liblttng-ust-java.so /lttng-libs/ && cp /usr/lib/x86_64-linux-gnu/liblttng-ust.so.1 /lttng-libs/ && echo "LTTng libs copied ok"
+          volumeMounts:
+            - name: lttng-libs
+              mountPath: /lttng-libs
       containers:
         - name: ts-wait-order-service
-          image: codewisdom/ts-wait-order-service:1.0.1
+          image: local/ts-wait-order-service:lttng
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: skywalking-agent
               mountPath: /skywalking
+            - name: lttng-run
+              mountPath: /var/run/lttng
+            - name: lttng-libs
+              mountPath: /lttng-libs
           env:
             - name: NODE_IP
               valueFrom:
@@ -3080,7 +3872,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['app']
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/skywalking/agent/skywalking-agent.jar"
+              value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Djava.library.path=/lttng-libs"
           envFrom:
             - secretRef:
                 name: ts-wait-order-mysql

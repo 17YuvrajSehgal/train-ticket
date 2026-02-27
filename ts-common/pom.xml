@@ -33,9 +33,6 @@
             <groupId>org.lttng.ust.agent</groupId>
             <artifactId>lttng-ust-agent-jul</artifactId>
             <version>1.0.0</version>
-            <!-- optional=true: if LTTng is absent (Windows CI, unit tests),
-                 the JVM still starts — the static catch block handles it silently -->
-            <optional>true</optional>
         </dependency>
     </dependencies>
     <build>
