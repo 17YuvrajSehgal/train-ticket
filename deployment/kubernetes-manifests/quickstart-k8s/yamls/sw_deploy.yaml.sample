@@ -45,7 +45,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -131,7 +131,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -217,7 +217,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -303,7 +303,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -389,7 +389,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -475,7 +475,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -563,7 +563,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -651,7 +651,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -737,7 +737,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -823,7 +823,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -909,7 +909,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -997,7 +997,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -1085,7 +1085,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -1173,7 +1173,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -1261,7 +1261,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -1351,7 +1351,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -1437,7 +1437,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -1525,7 +1525,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -1615,7 +1615,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -1701,7 +1701,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -1789,7 +1789,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -1875,7 +1875,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -1965,7 +1965,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -2055,7 +2055,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -2145,7 +2145,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -2233,7 +2233,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -2321,7 +2321,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -2409,7 +2409,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -2497,7 +2497,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -2585,7 +2585,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -2671,7 +2671,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -2759,7 +2759,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -2845,7 +2845,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -2933,7 +2933,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -3021,7 +3021,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -3109,7 +3109,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -3197,7 +3197,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -3285,7 +3285,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -3373,7 +3373,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -3459,7 +3459,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -3547,7 +3547,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -3635,7 +3635,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -3723,7 +3723,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
@@ -3853,7 +3853,7 @@ spec:
             - name: skywalking-agent
               mountPath: /skywalking
             - name: lttng-run
-              mountPath: /var/run/lttng
+              mountPath: /run/lttng
             - name: lttng-libs
               mountPath: /lttng-libs
           env:
