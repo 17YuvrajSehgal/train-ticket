@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  edu.fudan.common.tracing.LttngTracingAutoConfiguration
