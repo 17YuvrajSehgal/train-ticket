@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -57,17 +58,20 @@ public class TokenServiceImpl implements TokenService {
         String verification_code_service_url = getServiceUrl("ts-verification-code-service");
         if (!StringUtils.isEmpty(verifyCode)) {
             HttpEntity requestEntity = new HttpEntity(headers);
-            ResponseEntity<Boolean> re = restTemplate.exchange(
-                     verification_code_service_url + "/api/v1/verifycode/verify/" + verifyCode,
-                    HttpMethod.GET,
-                    requestEntity,
-                    Boolean.class);
-            boolean id = re.getBody();
-
-            // failed code
-            if (!id) {
-                LOGGER.info("[getToken][Verification failed][userName: {}]", username);
-                return new Response<>(0, "Verification failed.", null);
+            try {
+                ResponseEntity<Boolean> re = restTemplate.exchange(
+                        verification_code_service_url + "/api/v1/verifycode/verify/" + verifyCode,
+                        HttpMethod.GET,
+                        requestEntity,
+                        Boolean.class);
+                Boolean id = re.getBody();
+                if (id == null || !id) {
+                    LOGGER.info("[getToken][Verification failed][userName: {}]", username);
+                    return new Response<>(0, "Verification failed.", null);
+                }
+            } catch (ResourceAccessException e) {
+                LOGGER.warn("[getToken][Verification code service timeout or unreachable][userName: {}][error: {}]", username, e.getMessage());
+                return new Response<>(0, "Verification service unavailable. Please try again.", null);
             }
         }
 

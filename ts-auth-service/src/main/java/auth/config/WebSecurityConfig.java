@@ -66,13 +66,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * load password encoder
+     * load password encoder (strength 8 for faster verification; stored hash cost is used on verify)
      *
      * @return PasswordEncoder
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(8);
     }
 
     @Override
