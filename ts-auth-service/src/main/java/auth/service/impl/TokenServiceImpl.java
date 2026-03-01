@@ -1,11 +1,9 @@
 package auth.service.impl;
 
-import auth.constant.InfoConstant;
 import auth.dto.BasicAuthDto;
 import auth.dto.TokenDto;
 import auth.entity.User;
 import auth.exception.UserOperationException;
-import auth.repository.UserRepository;
 import auth.security.jwt.JWTProvider;
 import auth.service.TokenService;
 import edu.fudan.common.util.Response;
@@ -21,13 +19,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-
-import java.text.MessageFormat;
-import java.util.List;
 
 /**
  * @author fdse
@@ -38,9 +34,6 @@ public class TokenServiceImpl implements TokenService {
 
     @Autowired
     private JWTProvider jwtProvider;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -80,17 +73,16 @@ public class TokenServiceImpl implements TokenService {
 
         // verify username and password
         UsernamePasswordAuthenticationToken upat = new UsernamePasswordAuthenticationToken(username, password);
+        Authentication auth;
         try {
-            authenticationManager.authenticate(upat);
+            auth = authenticationManager.authenticate(upat);
         } catch (AuthenticationException e) {
             LOGGER.warn("[getToken][Incorrect username or password][username: {}, password: {}]", username, password);
             return new Response<>(0, "Incorrect username or password.", null);
         }
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserOperationException(MessageFormat.format(
-                        InfoConstant.USER_NAME_NOT_FOUND_1, username
-                )));
+        // Use authenticated principal to avoid duplicate DB round-trip (User implements UserDetails)
+        User user = (User) auth.getPrincipal();
         String token = jwtProvider.createToken(user);
         LOGGER.info("[getToken][success][USER TOKEN: {} USER ID: {}]", token, user.getUserId());
         return new Response<>(1, "login success", new TokenDto(user.getUserId(), username, token));

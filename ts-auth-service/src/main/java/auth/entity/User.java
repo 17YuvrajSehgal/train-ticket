@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "auth_user")
+@Table(name = "auth_user", indexes = @Index(name = "idx_auth_user_username", columnList = "user_name"))
 public class User implements UserDetails {
     @Id
     @Column(length=36, name = "user_id")

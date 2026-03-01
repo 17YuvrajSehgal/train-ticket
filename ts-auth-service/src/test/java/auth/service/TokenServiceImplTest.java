@@ -3,7 +3,6 @@ package auth.service;
 import auth.dto.BasicAuthDto;
 import auth.entity.User;
 import auth.exception.UserOperationException;
-import auth.repository.UserRepository;
 import auth.security.jwt.JWTProvider;
 import auth.service.impl.TokenServiceImpl;
 import edu.fudan.common.util.Response;
@@ -19,9 +18,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Optional;
 
 @RunWith(JUnit4.class)
 public class TokenServiceImplTest {
@@ -31,9 +29,6 @@ public class TokenServiceImplTest {
 
     @Mock
     private RestTemplate restTemplate;
-
-    @Mock
-    private UserRepository userRepository;
 
     @Mock
     private JWTProvider jwtProvider;
@@ -66,9 +61,9 @@ public class TokenServiceImplTest {
     public void testGetToken2() throws UserOperationException {
         BasicAuthDto dto = new BasicAuthDto("username", null, "");
         User user = new User();
-        Optional<User> optionalUser = Optional.of(user);
-        Mockito.when(authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
-        Mockito.when(userRepository.findByUsername("username")).thenReturn(optionalUser);
+        Authentication auth = Mockito.mock(Authentication.class);
+        Mockito.when(auth.getPrincipal()).thenReturn(user);
+        Mockito.when(authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class))).thenReturn(auth);
         Mockito.when(jwtProvider.createToken(user)).thenReturn("token");
         Response result = tokenServiceImpl.getToken(dto, headers);
         Assert.assertEquals("login success", result.getMsg());
