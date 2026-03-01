@@ -52,6 +52,6 @@ public class VerifyCodeController {
 
         boolean result = verifyCodeService.verifyCode(request, response, verifyCode, headers);
         LOGGER.info("[verifyCode][verify result: {}]", result);
-        return true;
+        return result;
     }
 }

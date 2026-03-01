@@ -17,8 +17,8 @@ import java.awt.image.BufferedImage;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,6 +41,8 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
             .expireAfterAccess(CAPTCHA_EXPIRED, TimeUnit.SECONDS)
             .build();
 
+    private static final Font CAPTCHA_FONT = new Font("Times New Roman", Font.PLAIN, 18);
+
     private static char mapTable[] = {
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
@@ -56,18 +58,16 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
             height = 20;
         }
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
         Graphics g = image.getGraphics();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
 
-        Random random = new Random(); //NOSONAR
-
-        g.setColor(getRandColor(200, 250));
+        g.setColor(getRandColor(200, 250, random));
         g.fillRect(0, 0, width, height);
 
-        g.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+        g.setFont(CAPTCHA_FONT);
 
-        g.setColor(getRandColor(160, 200));
-        for (int i = 0; i < 168; i++) {
+        g.setColor(getRandColor(160, 200, random));
+        for (int i = 0; i < 40; i++) {
             int x = random.nextInt(width);
             int y = random.nextInt(height);
             int xl = random.nextInt(12);
@@ -75,20 +75,17 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
             g.drawLine(x, y, x + xl, y + yl);
         }
 
-        String strEnsure = "";
-
+        StringBuilder strEnsure = new StringBuilder(4);
         for (int i = 0; i < 4; ++i) {
-            strEnsure += mapTable[(int) (mapTable.length * Math.random())];
-
+            strEnsure.append(mapTable[random.nextInt(mapTable.length)]);
             g.setColor(new Color(20 + random.nextInt(110), 20 + random.nextInt(110), 20 + random.nextInt(110)));
-
-            String str = strEnsure.substring(i, i + 1);
-            g.drawString(str, 13 * i + 6, 16);
+            g.drawString(strEnsure.substring(i, i + 1), 13 * i + 6, 16);
         }
+        String strEnsureStr = strEnsure.toString();
 
         g.dispose();
         returnMap.put("image", image);
-        returnMap.put("strEnsure", strEnsure);
+        returnMap.put("strEnsure", strEnsureStr);
 
         Cookie cookie = CookieUtil.getCookieByName(request, ysbCaptcha);
         String cookieId;
@@ -104,8 +101,8 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
                 cookieId = cookie.getValue();
             }
         }
-        VerifyCodeServiceImpl.LOGGER.info("[getImageCode][strEnsure: {}]", strEnsure);
-        cacheCode.put(cookieId, strEnsure);
+        VerifyCodeServiceImpl.LOGGER.info("[getImageCode][strEnsure: {}]", strEnsureStr);
+        cacheCode.put(cookieId, strEnsureStr);
         return returnMap;
     }
 
@@ -135,8 +132,7 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
     }
 
 
-    static Color getRandColor(int fc, int bc) {
-        Random random = new Random(); //NOSONAR
+    static Color getRandColor(int fc, int bc, ThreadLocalRandom random) {
         if (fc > 255) {
             fc = 255;
         }
